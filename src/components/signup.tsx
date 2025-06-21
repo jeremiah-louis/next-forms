@@ -12,13 +12,14 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import { LuLock } from "react-icons/lu";
+import { Lock, Loader2 } from "lucide-react";
 import { createUser } from "@/app/utils/actions";
 import { toast } from "sonner";
+import { useTransition } from "react";
 
 export function SignupForm() {
+    const [isPending, startTransition] = useTransition()
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,13 +30,21 @@ export function SignupForm() {
   const onSubmit = async (data:z.infer<typeof loginSchema>) => {
     // handle mutation here
     console.log(data);
-    const result = await createUser(data);
-
-    if(result.status == "error"){
-        toast.error(result.message)
-    }else {
-        toast.success(result.message)
-    }
+    startTransition(
+        async ()=>{
+            try {
+                const result = await createUser(data);
+                if(result.status === "ERROR"){
+                    toast.error(result.message)
+                }else {
+                    toast.success(result.message)
+                }
+                } catch (error) {
+                    console.log(error)
+                    toast.error("Something went wrong")
+                }
+        }
+    )
 
   }
   return (
@@ -87,9 +96,10 @@ export function SignupForm() {
                 <Input id="password" name="password" type="password" required />
               </div> */}
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
-                  <LuLock />
-                  Login
+                <Button type="submit" disabled={isPending} className="w-full">
+                  <Lock />
+                  {isPending ? "Loading..." : "Signup"}
+                  {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                 </Button>
               </div>
             </form>

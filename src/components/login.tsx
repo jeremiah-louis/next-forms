@@ -11,9 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { createUser } from "@/app/utils/actions";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "@/app/utils/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +40,7 @@ export function LoginForm({
   };
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Handle Mutation
-    console.log("Button has been clicked")
+    console.log(`Button has been clicked ${e}`)
   }
   return (
     <div className={cn("flex flex-col gap-6 w-1/2", className)} {...props}>
